@@ -86,7 +86,7 @@ DATABASES = {
         'NAME': 'agilecommandcentral',
         'USER': 'group10',
         'PASSWORD': 'password',
-        'HOST': '127.0.0.1',
+        'HOST': 'localhost',
         'PORT': '3306',
     }
 }
