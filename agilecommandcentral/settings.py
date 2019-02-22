@@ -84,9 +84,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'agilecommandcentral',
-        'USER': 'group10',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
+        'USER': 'KyleDBAdmin',
+        'PASSWORD': 'KyleCaKeFaRt100!!',
+        'HOST': 'dacc.cn6ier2gilv6.us-east-2.rds.amazonaws.com',
         'PORT': '3306',
     }
 }
