@@ -30,6 +30,9 @@ def current_user(request):
     return Response(serializer.data)
 
 
+#   Entering "Allow" into the JIRA popup returns an access token that is used here,
+#   This access token is processed once again to obtain the JIRA object
+#   that is used to access the JIRA API directly and safely.
 @api_view(['POST'])
 @permission_classes((AllowAny, ))
 def oauth_user(request):
@@ -65,7 +68,11 @@ def oauth_user(request):
         }
         return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
 
-
+#   Used for admins or session creators to send the final information to the JIRA server for ticket/action item creation.
+#   Do note that this function could fail on the JIRA side due to the user not having the right permissions to create said items.
+#
+#   I think line 98's contents should be flipped with line 100's contents at the session title should be the summary and the session text
+#   should be in the description.
 @api_view(['POST'])
 @permission_classes((AllowAny, ))
 def end_retro(request):
@@ -98,7 +105,8 @@ def end_retro(request):
     except:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-
+#   Starts the login. Returns a response data object that contains access tokens, user data, and the status code
+#   Would there be any use for the user data's token now that we're doing oauth?
 class UserAuthentication(APIView):
     '''
     Handle authentication with tokens
@@ -184,7 +192,8 @@ class UserAuthentication(APIView):
         finally:
             return Response(response_data, status=status_code)
 
-
+#   Returns a list of retroboard items based on whether the user making the request is the owner of the session or not
+#   Someone confirm this behavior as it's still just an assumption from what can be read in the code.
 class RetroBoardItemsList(generics.ListAPIView):
     '''
     Returns all retro board items
@@ -208,7 +217,7 @@ def check_session_owner(request):
 
     return Response(data)
 
-
+#   Session create and view, this class should be renamed to reflect these two functions/readability,
 class SessionCreate(APIView):
     '''
     Fetch and create sessions
@@ -235,7 +244,8 @@ class SessionCreate(APIView):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-
+#   Retrieves all users in current session.
+#   Does the test method function perform this task or is it something extra?
 class SessionMemberList(generics.ListAPIView):
     queryset = SessionMember.objects.all()
     serializer_class = SessionMemberSerializer
