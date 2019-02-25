@@ -166,7 +166,8 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('dacc.tovdvi.0001.use2.cache.amazonaws.com', 6379)],
+            "hosts": ["redis://(dacc.tovdvi.0001.use2.cache.amazonaws.com, 6379)"],
         },
+        "ROUTING": "agilecommandcentral.routing.channel_routing",
     },
 }
