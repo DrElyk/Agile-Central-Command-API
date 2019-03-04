@@ -29,6 +29,7 @@ class SessionConsumer(WebsocketConsumer):
             )
 
             self.accept()
+            self.reply_channel.send({'accept': True})
         else:
             self.close()
 
