@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import datetime
-import channels_redis
+from channels_redis.core import RedisChannelLayer
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
