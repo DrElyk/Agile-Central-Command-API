@@ -164,7 +164,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 ASGI_APPLICATION = "agilecommandcentral.routing.application"
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'asgi_redis.RedisChannelLayer',
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
             "hosts": [("dacc.tovdvi.0001.use2.cache.amazonaws.com",6379)],
         },
