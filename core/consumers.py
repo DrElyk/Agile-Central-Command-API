@@ -23,12 +23,13 @@ class SessionConsumer(WebsocketConsumer):
                 new_member.save()
 
             # Join session
-            import pdb; pdb.set_trace()
+            print('before group add')
             async_to_sync(self.channel_layer.group_add)(
                 self.room_group_name,
                 self.channel_name
             )
 
+            print('before accept')
             self.accept()
 
         else:
