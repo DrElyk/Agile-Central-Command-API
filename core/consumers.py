@@ -28,6 +28,8 @@ class SessionConsumer(WebsocketConsumer):
             #    self.room_group_name,
             #    self.channel_name
             #)
+            print(self.room_group_name)
+            print(self.channel_name)
 
             print('before accept')
             self.accept()
