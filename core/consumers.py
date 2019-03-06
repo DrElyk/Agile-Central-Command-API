@@ -24,10 +24,10 @@ class SessionConsumer(WebsocketConsumer):
 
             # Join session
             print('before group add')
-            #async_to_sync(self.channel_layer.group_add)(
-            #    self.room_group_name,
-            #    self.channel_name
-            #)
+            async_to_sync(self.channel_layer.group_add)(
+               self.room_group_name,
+               self.channel_name
+            )
             print(self.room_group_name)
             print(self.channel_name)
 
@@ -48,6 +48,7 @@ class SessionConsumer(WebsocketConsumer):
     # Receive message from WebSocket
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
+        print('message coming...')
         print(text_data_json)
         message = text_data_json['actionItemText']
 
@@ -75,7 +76,7 @@ class SessionConsumer(WebsocketConsumer):
         message = event['message']
 
         # Send message to WebSocket
-        # self.send(text_data=json.dumps({
-        #     'message': message
-        # }))
-        self.send(text_data=message)
+        self.send(text_data=json.dumps({
+            'message': message
+        }))
+        # self.send(text_data=message)
