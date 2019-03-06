@@ -23,6 +23,7 @@ class SessionConsumer(WebsocketConsumer):
                 new_member.save()
 
             # Join session
+            import pdb; pdb.set_trace()
             async_to_sync(self.channel_layer.group_add)(
                 self.room_group_name,
                 self.channel_name
@@ -31,6 +32,7 @@ class SessionConsumer(WebsocketConsumer):
             self.accept()
 
         else:
+            print('Closing socket...')
             self.close()
 
     def disconnect(self, close_code):

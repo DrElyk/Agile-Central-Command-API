@@ -21,7 +21,6 @@ class QueryEmailAuthMiddlewareStack:
 
     def __call__(self, scope):
         email_query = scope['query_string'].decode()
-        print(email_query)
 
         # print(type(scope['query_string'].decode()))
         # Look up user from query string (you should also do things like
