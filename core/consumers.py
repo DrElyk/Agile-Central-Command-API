@@ -24,10 +24,10 @@ class SessionConsumer(WebsocketConsumer):
 
             # Join session
             print('before group add')
-            async_to_sync(self.channel_layer.group_add)(
-                self.room_group_name,
-                self.channel_name
-            )
+            #async_to_sync(self.channel_layer.group_add)(
+            #    self.room_group_name,
+            #    self.channel_name
+            #)
 
             print('before accept')
             self.accept()
