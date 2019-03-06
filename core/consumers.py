@@ -27,10 +27,8 @@ class SessionConsumer(WebsocketConsumer):
                 self.room_group_name,
                 self.channel_name
             )
-            
-            self.send({
-                "type": "websocket.accept"
-            })
+
+            self.accept()
 
         else:
             self.close()
