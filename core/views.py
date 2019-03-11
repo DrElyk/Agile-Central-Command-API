@@ -188,22 +188,21 @@ class StorySelectList(APIView):
                 oauth=jira_options
             )
             stories = jac.search_issues('issueType=Story')
+            session_id = Session.objects.get(id=request.data['session'])
             for story in stories:
-                story_serializer = StorySerializer(data={
-                    'session': request.data['session'],
-                    'title': story.fields.id,
-                    'description': story.feilds.description,
-                    'story_points': story.fields.customfield_10024,
-                    'key': story.key}
+                story = Story(
+                    title=story.fields.summary,
+                    description=story.fields.description,
+                    story_points=story.fields.customfield_10024,
+                    session=session_id,
+                    key=story.key
                 )
-                if(story_serializer.is_valid):
-                    story_serializer.save()
+                story.save()
+            return Response(status=status.HTTP_200_OK)
         except:
             return Response(
-                story_serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST
             )
-        return Response(story_serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -282,7 +281,7 @@ class Stories(APIView):
     '''
 
     def get(self, request, session_id, format=None):
-        story_list = Story.objects.filter(session_id=session_id)
+        story_list = Story.objects.filter(session=session_id)
         serializer = StorySerializer(story_list, many=True)
         return Response(serializer.data)
 

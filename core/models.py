@@ -110,6 +110,12 @@ class Story(models.Model):
     def __str__(self):
         return self.title
 
+    @classmethod
+    def create(cls, title, description, story_points, session, key):
+        print("creating......")
+        story = cls(title=title, description=description, story_points=story_points, session=session, key=key)
+        return story
+
 
 class Card(models.Model):
     card = models.IntegerField()
