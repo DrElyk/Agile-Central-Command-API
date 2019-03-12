@@ -233,10 +233,13 @@ class SessionMemberList(APIView):
 
 @api_view(['POST'])
 def update_points(request):
-    story = Story.objects.get(id=request.data['id'])
-    story.story_points = request.data['points']
-    story.save(update_fields=["story_points"])
-    return Response(status=status.HTTP_200_OK)
+    try:
+        story = Story.objects.get(key=request.data['key'])
+        story.story_points = request.data['points']
+        story.save(update_fields=["story_points"])
+        return Response(status=status.HTTP_200_OK)
+    except:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
@@ -317,15 +320,16 @@ def end_poker(request):
             options={'server': JIRA_SERVER},
             oauth=jira_options
         )
-        new_stories = Story.objects.get(session=request.data['session'])
+        current_session = Session.objects.get(id=request.data['session'])
+        new_stories = Story.objects.filter(session=current_session)
         old_stories = jac.search_issues('issueType=Story')
         for ns in new_stories:
             for os in old_stories:
                 if(ns.key == os.key):
-                    os.update(fields={'customfield_10024': ns.story_points})
+                    os.update(customfield_10024=ns.story_points)
+                    print(os.fields.customfield_10024)
                     break
-        session = Session.objects.get(id=request.data['session'])
-        session.delete()
+        #session.delete()
         return Response(status=status.HTTP_200_OK)
     except:
         return Response(status=status.HTTP_400_BAD_REQUEST)
