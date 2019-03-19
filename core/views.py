@@ -160,7 +160,8 @@ class SessionCreate(APIView):
             response_data = ({
                 'id': session.id,
                 'title': session.title,
-                'session_type': session.session_type
+                'session_type': session.session_type,
+                'owner': owner.username
             })
             return Response(
                 data=response_data,
