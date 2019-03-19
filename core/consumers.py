@@ -9,8 +9,8 @@ import json
 class HomeConsumer(WebsocketConsumer):
     def connect(self):
         print('CONNECT')
-        self.room_name = 'home'
-        self.room_group_name = 'session_home'
+        self.room_name = 'dashboard'
+        self.room_group_name = 'dashboard_home'
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name
@@ -41,19 +41,33 @@ class HomeConsumer(WebsocketConsumer):
                     'owner': owner
                 }
             )
+        elif 'delete_session' in text_data_json:
+            session_id = text_data_json['session_id']
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'delete_session',
+                    'session_id': session_id
+                }
+            )
 
     def create_session(self, event):
         session_type = event['session_type']
         entered_text = event['entered_text']
         session_id = event['session_id']
         owner = event['owner']
-
         self.send(text_data=json.dumps({
             'create_session': 'Create a new session',
             'session_type': session_type,
             'entered_text': entered_text,
             'session_id': session_id,
             'owner': owner
+        }))
+    def delete_session(self, event):
+        session_id = event['session_id']
+        self.send(text_data=json.dumps({
+            'delete_session': 'Delete a session',
+            'session_id': session_id
         }))
 
 
