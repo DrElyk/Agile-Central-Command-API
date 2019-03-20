@@ -77,32 +77,17 @@ class RetroConsumer(WebsocketConsumer):
         session = get_session_object(
             self.scope['url_route']['kwargs']['session_name']
         )
-        try:
-            member = SessionMember.objects.get(
-                session=session,
-                member=self.scope['user']
-            )
-        except SessionMember.DoesNotExist:
-            member = None
 
         if session is not None:
             self.room_name = session.title
             self.room_group_name = 'session_%s' % self.room_name
 
-            if member is None:
-                new_member = SessionMember.objects.create(
-                    session=session, member=self.scope['user']
-                )
-                new_member.save()
-
-            # Join session
             async_to_sync(self.channel_layer.group_add)(
                 self.room_group_name,
                 self.channel_name
             )
             self.accept()
         else:
-            # print('DISCONNECT - MISSING SESSION')
             self.close()
 
     def disconnect(self, close_code):
@@ -291,6 +276,7 @@ class RetroConsumer(WebsocketConsumer):
             'session_owner': session_owner,
             'end_session_message': end_session_message
         }))
+        self.close()
 
     def exit_session_by_user(self, event):
         exit_session_message = event['message']
@@ -299,6 +285,7 @@ class RetroConsumer(WebsocketConsumer):
             'member': member,
             'exit_session_message': exit_session_message
         }))
+        self.close()
 
 
 class PokerConsumer(WebsocketConsumer):
@@ -307,32 +294,17 @@ class PokerConsumer(WebsocketConsumer):
         session = get_session_object(
             self.scope['url_route']['kwargs']['session_name']
         )
-        try:
-            member = SessionMember.objects.get(
-                session=session,
-                member=self.scope['user']
-            )
-        except SessionMember.DoesNotExist:
-            member = None
 
         if session is not None:
             self.room_name = session.title
             self.room_group_name = 'session_%s' % self.room_name
 
-            if member is None:
-                new_member = SessionMember.objects.create(
-                    session=session, member=self.scope['user']
-                )
-                new_member.save()
-
-            # Join session
             async_to_sync(self.channel_layer.group_add)(
                 self.room_group_name,
                 self.channel_name
             )
             self.accept()
         else:
-            print('DISCONNECT - MISSING SESSION')
             self.close()
 
     def disconnect(self, close_code):
@@ -488,6 +460,7 @@ class PokerConsumer(WebsocketConsumer):
             'end_game': end_game,
             'story': story
         }))
+        self.close()
 
 
 class LobbyConsumer(WebsocketConsumer):
@@ -496,7 +469,7 @@ class LobbyConsumer(WebsocketConsumer):
             self.scope['url_route']['kwargs']['session_name']
         )
 
-        if session is not None:
+        if session is not None and session.is_started is False:
             self.room_name = session.title
             self.room_group_name = 'session_%s' % self.room_name
 
@@ -559,6 +532,8 @@ class LobbyConsumer(WebsocketConsumer):
                 print("User does not exist!")
         elif 'start_game' in text_data_json:
             start_game = text_data_json['start_game']
+            session.is_started = True
+            session.save(update_fields=['is_started'])
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
                 {
@@ -635,6 +610,7 @@ class LobbyConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({
             'start_game': start_game
         }))
+        self.close()
 
     def display_retro(self, event):
         display_retro = event['display_retro']
@@ -647,6 +623,7 @@ class LobbyConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({
             'cancel_game': cancel_game
         }))
+        self.close()
 
     def exit_game(self, event):
         exit_game = event['exit_game']
@@ -655,3 +632,4 @@ class LobbyConsumer(WebsocketConsumer):
             'exit_game': exit_game,
             'player': player
         }))
+        self.close()
